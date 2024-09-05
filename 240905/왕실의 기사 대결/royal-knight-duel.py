@@ -67,7 +67,9 @@ def should_go(idx, d):
 
 for cmd in cmds:
     idx, d = cmd
+    # 벽에 막혀서 이동할 수 없는지 여부 체크까지 완료
     print(should_go(idx-1, d))
+
 """
 4 3 1
 0 0 1 0
