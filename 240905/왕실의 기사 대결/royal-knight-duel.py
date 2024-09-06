@@ -3,10 +3,17 @@ input = sys.stdin.readline
 
 L,N,Q = map(int, input().split())
 g = [list(map(int, input().split())) for _ in range(L)]
-knights = [list(map(int, input().split())) for _ in range(N)]
+knights = []
+for _ in range(N):
+    r,c,h,w,k = map(int, input().split())
+    knights.append([r-1,c-1,h,w,k])
 cmds = [list(map(int, input().split())) for _ in range(Q)]
-dr = [-1, 0, 1, 0]
-dc = [0, 1, 0, -1]
+
+# idx 4 는 제자리를 의미
+dr = [-1, 0, 1, 0, 0]
+dc = [0, 1, 0, -1, 0]
+
+executed = []
 
 walls = set([(i, j) for i in range(L) for j in range(L) if g[i][j] == 2])
 
@@ -37,7 +44,6 @@ def should_go(idx, d):
     :param d: 이동할 방향
     :return: 벽에 막히거나 장외인지 여부  True | False
     """
-    print(idx, d)
     # 장외 체크
     if not in_range(idx, d):
         return False
@@ -53,12 +59,16 @@ def should_go(idx, d):
         for i, knight in enumerate(knights):
             if i == idx:
                 continue
-            another_area = get_area(i, d)
+            # 각 기사의 현재 위치에 대한 영역
+            another_area = get_area(i, 4)
             if pos not in another_area:
                 continue
             # 충돌하는 기사에 대해서 재귀적으로 체크
+            if i in executed:
+                continue
+
+            executed.append(i)
             sub_res = should_go(i, d)
-            print(f'sub_res = {sub_res}')
             # 한 명이라도 진행할 수 없다면 모든 기사가 이동할 수 없음
             if sub_res == False:
                 return False
@@ -68,10 +78,11 @@ def should_go(idx, d):
 for cmd in cmds:
     idx, d = cmd
     # 벽에 막혀서 이동할 수 없는지 여부 체크까지 완료
+    executed = []
     print(should_go(idx-1, d))
 
 """
-4 3 1
+4 3 3
 0 0 1 0
 0 0 1 0
 1 1 0 1
@@ -80,4 +91,6 @@ for cmd in cmds:
 2 1 2 1 1
 3 2 1 2 3
 1 2
+2 1
+3 3
 """
